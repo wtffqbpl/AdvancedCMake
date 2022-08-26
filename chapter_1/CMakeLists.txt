@@ -131,3 +131,87 @@ endif()
 
 add_executable(Chapter1)
 target_sources(Chapter1 PRIVATE src/main.cc)
+
+# Properties
+# Properties in CMake are values that are attached to a specific object or scope
+# of CMake, such as a file, target, directory, or test case. Properties can be
+# set or changed by using the set_property function. To read the value of a
+# property, you can use the get_property function, which follows a similar
+# pattern. By default, set_property overwrites the values that are already
+# stored inside a property. Values can be added to the current value by passing
+# APPEND or APPEND_STRING to set_property.
+# The full signature is as follows:
+# set_property(<GLOBAL                      |
+#               DIRECTORY [<dir>]           |
+#               TARGET [<target1> ...]      |
+#               SOURCE [<src1> ...] [DIRECTORY <dirs> ...] [TARGET_DIRECTORY <targets> ...] |
+#               INSTALL [<file1> ...]       |
+#               TEST [<test1> ...]          |
+#               CACHE [<entry1> ...]        |
+#               [APPEND] [APPEND_STRING]
+#               PROPERTY <propertyName> [<values>])
+# **GLOBAL** Global properties that affect the whole build process.
+# **DIRECTORY** <dir>: properties that are bound to the current directory or
+#        the directories specified in <dir>. These can also be set directly
+#        using the set_directory_properties command.
+# **TARGET <targets>** Properties of specific targets. They can also be set
+#        using the set_target_properties function.
+# IMPORTANT:
+# It is good practice to use direct functions such as set_target_properties and
+# set_test_properties when modifying properties instead of the more general
+# set_property command. Using explicit commands avoids making mistakes and
+# confusion between the proeprty names and is generally more readable. There's
+# also the define_property function, which creates a property without setting
+# the value. We advise that you don't use this as properties should always have
+# a sane default value.
+
+# Loops and conditions.
+set(LoopCnt 0)
+while (LoopCnt LESS "5")
+    message(STATUS "Chapter1: LoopCnt is '${LoopCnt}'.")
+    math(EXPR LoopCnt "${LoopCnt} + 1")
+endwhile()
+unset(LoopCnt)
+
+# foreach
+set(MYLIST abc def ghi)
+foreach(ITEM IN LISTS MYLIST)
+    # find index
+    list(FIND MYLIST ${ITEM} idx)
+    message(STATUS "${ITEM} is the ${idx}-th value in MYLIST.")
+endforeach()
+
+# Functions
+# Functions open a new scope for variables, so all the variables that are
+# defined inside are not accessible from the outside unless the PARENT_SCOPE
+# option is passed to set().
+# Functions are case-insensitive and are invoked by calling function, followed
+# by parentheses.
+function(foo ARG1)
+    message(STATUS "The foo function's argument value is ${ARG1}.")
+endfunction()
+foo("bar")
+
+# macros
+# CMake macros are defined using the macro()/endmacro() commands. They are a
+# bit like functions, with the difference that in functions, the arguments are
+# true variables, whereas in macros, they are string replacements. This means
+# that all arguments of a macro must be accessed using curly brackets.
+# Another difference is that by calling a function, control is transferred to
+# the functions. Macros are executed as if the body of the macros are not
+# creating scopes regarding variables and control flow. Consequently, it is
+# highly recommended to avoid calling return() in macros as this would stop
+# the scope from executing where the macro is called.
+
+# Generator expressions.
+# Generator expressions are small statements that are evaluated during the
+# configuration phase of the build. Most functions allow generator expressions
+# to be used, with a few exceptions. They take the form of $<OPERATOR:VALUE>,
+# where OPERATOR is applied or compared to VALUE. You can think of generator
+# expressions as small inline if-statements.
+target_compile_options(Chapter1 PRIVATE
+        "$<$<CXX_COMPILER_ID:GNU,Clang,AppleClang>:-Wall>")
+
+message(STATUS "CMAKE_CXX_COMPILER is ${CMAKE_CXX_COMPILER}.")
+add_compile_options(-g)
+message(STATUS "CMAKE_CXX_FLAGS is ${CMAKE_CXX_FLAGS}.")
