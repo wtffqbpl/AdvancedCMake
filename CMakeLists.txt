@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 project("AdvancedCMake"
         VERSION 1.0
         DESCRIPTION "My Advanced CMake Learning materials."
