@@ -1,1 +1,3 @@
 add_subdirectory(hello_world_standalone)
+add_subdirectory(hello_world_lib)
+add_subdirectory(hello_header_only)
